@@ -1,0 +1,76 @@
+/* Bên dưới để sửa thanh gạt tròn tròn nhỏ*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.sliderMode {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  -webkit-transition: 1s;
+  transition: 1s;
+}
+
+.sliderMode:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 1s;
+  transition: 1s;
+}
+
+input:checked + .sliderMode {
+  background-color: green;
+}
+
+input:focus + .sliderMode {
+  box-shadow: 0 0 0.2px green;
+}
+
+input:checked + .sliderMode:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.sliderMode.round {
+  border-radius: 34px;
+}
+
+.sliderMode.round:before {
+  border-radius: 50%;
+}
+
+/* Sửa tooltip (khi trỏ chuột vào các ô nhỏ hiển thị chú thích cho người dùng) */
+.tooltip {
+    background-color:#000;
+    border:1px solid #fff;
+    padding:10px 15px;
+    width:200px;
+    display:none;
+    color:#fff;
+    text-align:left;
+    font-size:12px;
+ 
+    /* outline radius for mozilla/firefox only */
+    -moz-box-shadow:0 0 10px #000;
+    -webkit-box-shadow:0 0 10px #000;
+}

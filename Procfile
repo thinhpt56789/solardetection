@@ -1,0 +1,1 @@
+web: env TZ='Asia/Ho_Chi_Minh' node server.js

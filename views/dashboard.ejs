@@ -1,0 +1,159 @@
+<html>
+
+<head>
+<title>My Solar</title> <!-- Tên Tab -->
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <!-- Vietnamese -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="../img/tabicon.png"><!--  Hiển thị hình cho tab -->
+<link rel="stylesheet" href="../css/history.css"> <!-- include File CSS tự tạo -->
+<link rel="stylesheet" href="../css/dashboard.css">	<!-- include File CSS tự tạo -->
+<link rel="stylesheet" href="../css/login.css">	<!-- include File CSS tự tạo -->
+		
+<style>
+
+/*Giao diện chung cho toàn trang*/
+body {
+  	font-family: Arial, Helvetica, sans-serif;
+  	background-repeat: no-repeat;
+ 	background-attachment: fixed;
+ 	background-size: 100% 100%;
+}
+
+</style>
+</head>
+
+<!-- Giao diện các khối -->
+<body>
+		<table cellspacing = "15" style="margin-left:auto;margin-right:auto; margin-top: auto; margin-bottom: auto;">
+			<tr>
+				<td></td>
+				<td style = "text-align: center;"> 
+					<img id = "solarStatus" width="150px" height="150px" style="cursor: pointer; float: center;" title="Trạng thái tấm pin" src="../img/SO.png"><!-- SF.png"> -->
+				</td>
+			</tr>
+			<tr></tr><tr></tr><tr></tr><tr></tr>
+			<tr>
+				<td></td>
+				<td style = "text-align: center;"> 
+					<img id = "up" width="80px" height="80px" style="cursor: pointer;" title="Xoay lên" src="../img/AU.png" onclick="controlDirection('up')" >
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td style = "text-align: center;"> 
+					<img id = "left" width="80px" height="80px" style="cursor: pointer;" title="Xoay trái" src="../img/AL.png" onclick="controlDirection('left')" >
+				</td>
+				<td></td>
+				<td style = "text-align: center;"> 
+					<img id = "right" width="80px" height="80px" style="cursor: pointer;" title="Xoay phải" src="../img/AR.png" onclick="controlDirection('right')" >
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td style = "text-align: center;">  
+					<img id = "down" width="80px" height="80px" style="cursor: pointer;" title="Xoay xuống" src="../img/AD.png" onclick="controlDirection('down')" >
+				</td>
+				<td></td>
+			</tr>
+			<tr></tr><tr></tr>
+			<tr>
+				<td colspan = "2" style = "text-align: center;">  
+				<span style = "float: left;">Bằng tay</span>
+				<label class="switch" title = "Chuyển chế độ" style = "float: center;">
+  					<input id = "modeSlider" type="checkbox" onchange="modeChange()" checked>
+  					<span class="sliderMode round"></span>
+				</label>
+				<span style = "float: right;">Tự dộng</span>
+				</td>
+				<td>
+					<img id = "chart" width="80px" height="80px" style="cursor: pointer;" onclick="showChart()" title="Lịch sử điện áp" src="../img/History.png">
+				</td>
+			</tr>
+			<tr>
+				<td colspan = "2" style = "text-align: center;">  
+				<span style = "float: left;">Nghỉ ngơi</span>
+				<label class="switch" title = "Giả lập thời gian" style = "float: center;">
+  					<input id = "timeSlider" type="checkbox" onchange="timeChange()" checked>
+  					<span class="sliderMode round"></span>
+				</label>
+				<span style = "float: right;">Hoạt động</span>
+				</td>
+			</tr>
+		</table>
+
+	<div id="idHistoryChart" class="modal">
+ 		<div class="modal-content animate"  style = "padding: 35px; width: 80%; height: 80%">
+			<div title = "Chọn ngày">
+				<input id = "idDateSelection" class = "myDateSelection" type="date" style = "float: left;">
+				<button id = "idDateSearch" class = "myDateSearchButton" onclick="showHistory()" style = "float: left;">Search</button>
+			</div>
+			<!-- <div title = "Số lượng hiển thị">
+				<input id = "idQuantitySelection" class = "myQuantitySelection" type="number" min = "0"; max = "50"; style = "float: left;">
+				<button id = "idQuantityApply" class = "myDateSearchButton" style = "float: left;">Apply</button>
+			</div> -->
+			<div style = "float:right;">
+				<img id = "closeHistory" width="20px" height="20px" style="cursor: pointer;" onclick="closeChart()" src="../img/close.png">
+			</div>
+      		<div style = "height: 95%; width: 100%;">
+				<canvas id="myChart"></canvas>
+    		</div>
+  		</div>
+	</div>
+
+	<div id="idLogin" class="modalLogin">
+		<form class="modalLogin-content" name = "loginform">
+			<div class="imgcontainer">
+		  		<img src="/img/login.png" alt="Avatar" class="avatar">
+			</div>
+
+			<div class="containerLogin">
+		  		<label><b>ID</b></label>
+		  		<input id ="idUsr" type="text" placeholder="Enter Username" name="uname" required>
+		  		<label><b>Password</b></label> 
+		  		<input id ="idPsw" type="password" placeholder="Enter Password" name="psw" required>
+
+		   		<button id ="idBtn" type="button" onclick= "Login()">Login</button>
+			</div>
+ 		</form>
+	</div>
+
+
+</body>
+
+<script src ="https://code.jquery.com/jquery-3.4.1.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>	
+<script src = "/socket.io/socket.io.js"></script>
+
+<!-- Khai báo các file điều khiển -->
+<script src = "/functions/chart.js"></script>
+<script src = "/functions/control.js"></script>
+<script src = "/functions/login.js"></script>
+<script type="text/javascript">
+
+// Hàm bên dưới đây sẽ thực hiện việc hiển thị thông tin khi người dùng trỏ chuột vào 1 trong các input (tooltip)
+(function($){
+	function RegisterCapcha() {
+ 		// select all desired input fields and attach tooltips to them
+ 		$("#myform :input").tooltip({
+
+ 		// place tooltip on the right edge
+ 		position: "center right",
+ 
+ 		// a little tweaking of the position
+ 		offset: [-2, 10],
+ 
+ 		// use the built-in fadeIn/fadeOut effect
+ 		effect: "fade",
+ 
+ 		// custom opacity setting
+ 		opacity: 0.7
+ 
+ 		});
+	}
+}(jQuery));
+
+</script>
+
+
+</html>
