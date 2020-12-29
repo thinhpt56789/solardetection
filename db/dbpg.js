@@ -1,12 +1,15 @@
-var mysql = require('mysql'); // Khởi tạo câu lệnh DB
-var pool = mysql.createConnection({
-    connectionLimit: 20,
-    host: "localhost", // Host mặc định
-  	user: "root", // User mặc định
-  	password: "", // Password mặc định
-  	dateStrings: true, 
-  	database: "solardetection" // Tên database
+const { Client } = require('pg');
+
+const pool = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'postgres',
+    password: '1',
+    port: 5432,
 });
+
+pool.connect();
+
 
 // Các hàm bên dưới sẽ được gọi từ file "server.js"
 
@@ -84,7 +87,7 @@ exports.querySaveModeStatus = function (stt) {
 			stt = 0;
 		else if (stt == "1")
 			stt = 1;
-		pool.query("UPDATE mode SET mode = '" + stt +"' WHERE id = 1;", function(err, rows, fields) { // Truy vấn
+		pool.query("UPDATE mode SET mode = '" + stt +"';", function(err, rows, fields) { // Truy vấn
 			if (err){
 				resolve("querySaveModeStatus-ERROR");
 				return;
@@ -97,50 +100,13 @@ exports.querySaveModeStatus = function (stt) {
 // Hàm này sẽ lấy giá trị trạng thái mode hiện tại
 exports.queryGetModeStatus = function () {
 	return new Promise (function (resolve, reject) {
-		pool.query("SELECT mode FROM mode WHERE id = 1;", function(err, rows, fields) { // Truy vấn
+		pool.query("SELECT mode FROM mode;", function(err, res, fields) { // Truy vấn
+			console.log(res.rows[0].mode);
 			if (err){
 				resolve("queryGetModeStatus-ERROR");
 				return;
 			} 
-			else resolve(rows[0].mode);
-		});
-	});
-}
-
-// Hàm này sẽ lưu giá trị mode
-exports.querySaveTimeStatus = function (stt) {
-	return new Promise (function (resolve, reject) {
-		// Một số ký tự dạng char hoặc bool sẽ được đổi về số 
-		if(stt == false)
-			stt = 0;
-		else if (stt == true)
-			stt = 1;
-		if(stt == "0")
-			stt = 0;
-		else if (stt == "1")
-			stt = 1;
-		pool.query("UPDATE mode SET mode = '" + stt +"' WHERE id = 2;", function(err, rows, fields) { // Truy vấn
-			if (err){
-				resolve("querySaveTimeStatus-ERROR");
-				return;
-			} 
-			else resolve("querySaveTimeStatus-OK");
-		});
-	});
-}
-
-// Hàm này sẽ lấy giá trị trạng thái mode hiện tại
-exports.queryGetTimeStatus = function () {
-	return new Promise (function (resolve, reject) {
-		pool.query("SELECT mode FROM mode WHERE id = 2;", function(err, rows, fields) { // Truy vấn
-			if (err){
-				resolve("queryGetTimeStatus-ERROR");
-				return;
-			} 
-			else {
-				var addPrefix = 't' + rows[0].mode;
-				resolve(rows[0].mode);
-			}
+			else resolve(res.rows[0].mode);
 		});
 	});
 }
