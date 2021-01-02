@@ -93,13 +93,13 @@ function drawChart(Value, Time, DateTitle) {
           position: 'left',
           scaleLabel: {
             display: true,
-            labelString: 'Rate(Volt)',  
+            labelString: 'Rate(mA)',  
             fontSize: 25
           },
           ticks: {
             min: 0,
-            max: 15,
-            stepSize: 1
+            max: 100,
+            stepSize: 10
           }
         }],
 

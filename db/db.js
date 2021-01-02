@@ -1,12 +1,22 @@
-var mysql = require('mysql'); // Khởi tạo câu lệnh DB
-var pool = mysql.createConnection({
-    connectionLimit: 20,
-    host: "localhost", // Host mặc định
-  	user: "root", // User mặc định
-  	password: "", // Password mặc định
-  	dateStrings: true, 
-  	database: "solardetection" // Tên database
+const { Client } = require('pg');
+
+const pool = new Client({
+    // user: 'postgres',
+    // host: 'localhost',
+    // database: 'postgres',
+    // password: '1',
+    // port: 5432,
+    connectionString: process.env.DATABASE_URL,
+  	ssl: { rejectUnauthorized: false }
 });
+
+pool.connect(function(error){
+	if(error)
+		console.log(error);
+	else
+		console.log("Connected to db");
+});
+
 
 // Các hàm bên dưới sẽ được gọi từ file "server.js"
 
@@ -43,13 +53,13 @@ exports.querySaveEnergy = function (data) {
 // Hàm này sẽ lấy giá trị phút cuối cùng ra so sánh
 exports.queryGetLastMinute = function () {
 	return new Promise (function (resolve, reject) {
-		pool.query("SELECT MINUTE(time) AS time FROM history WHERE id=(SELECT MAX(id) FROM history);", function(err, rows, fields) { // Truy vấn
+		pool.query("SELECT MINUTE(time) AS time FROM history WHERE id=(SELECT MAX(id) FROM history);", function(err, res, fields) { // Truy vấn
 			if (err){
 				resolve("queryGetLastMinute-ERROR");
 				return;
 			} 
-			if(rows.length>0){
-				resolve(rows[0].time);
+			if(res.rows.length>0){
+				resolve(res.rows[0].time);
 			}
 			else resolve("EMPTY_DATA");
 		});
@@ -59,13 +69,13 @@ exports.queryGetLastMinute = function () {
 // Hàm này sẽ truy vấn và trả về các giá trị cảm biến 
 exports.queryGetHistory = function (date) {
 	return new Promise (function (resolve, reject) {
-		pool.query("SELECT value,time FROM history where date = '" + date +"';", function(err, rows, fields) { // Truy vấn
+		pool.query("SELECT value,time FROM history where date = '" + date +"';", function(err, res, fields) { // Truy vấn
 			if (err){
 				resolve("queryGetHistory-ERROR");
 				return;
 			} 
-			if(rows.length>0){
-				resolve(rows);
+			if(res.rows.length>0){
+				resolve(res.rows);
 			}
 			else resolve("EMPTY_DATA");
 		});
@@ -97,12 +107,13 @@ exports.querySaveModeStatus = function (stt) {
 // Hàm này sẽ lấy giá trị trạng thái mode hiện tại
 exports.queryGetModeStatus = function () {
 	return new Promise (function (resolve, reject) {
-		pool.query("SELECT mode FROM mode WHERE id = 1;", function(err, rows, fields) { // Truy vấn
+		pool.query("SELECT mode FROM mode WHERE id = 1;", function(err, res, fields) { // Truy vấn
+			console.log(res.rows[0].mode);
 			if (err){
 				resolve("queryGetModeStatus-ERROR");
 				return;
 			} 
-			else resolve(rows[0].mode);
+			else resolve(res.rows[0].mode);
 		});
 	});
 }
@@ -132,14 +143,13 @@ exports.querySaveTimeStatus = function (stt) {
 // Hàm này sẽ lấy giá trị trạng thái mode hiện tại
 exports.queryGetTimeStatus = function () {
 	return new Promise (function (resolve, reject) {
-		pool.query("SELECT mode FROM mode WHERE id = 2;", function(err, rows, fields) { // Truy vấn
+		pool.query("SELECT mode FROM mode WHERE id = 2;", function(err, res, fields) { // Truy vấn
 			if (err){
 				resolve("queryGetTimeStatus-ERROR");
 				return;
 			} 
 			else {
-				var addPrefix = 't' + rows[0].mode;
-				resolve(rows[0].mode);
+				resolve(res.rows[0].mode);
 			}
 		});
 	});
