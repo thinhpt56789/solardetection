@@ -155,7 +155,7 @@ io.on("connection", function(socket)
   });
 
   socket.on("CHECKING_LOGIN", function(data){
-    if(data[0] == "solar" && data[1] == "1")
+    if(data[0] == "solar" && data[1] == "123456")
     {
       socket.emit("OK_CREDENTIAL");
     } 

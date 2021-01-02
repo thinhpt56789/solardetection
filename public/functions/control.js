@@ -16,7 +16,7 @@ var controlOnce = false;
 
   // Nhận giá trị cảm biến từ SERVER thông qua route "ENERGY-HISTORY"
   socket.on("ENERGY_DATA",function(data)
-  { 
+  { s
     // Kiểm tra xem có giá trị hay k
     if(data != "EMPTY_DATA")
     {
