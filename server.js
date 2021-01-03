@@ -48,8 +48,8 @@ io.on("connection", function(socket)
     console.log("split dir: ",getDirStatus);
 
     var Vref = 4.12 // Khi chỉ cắm nguồn 12V, có thêm nguồn usb sẽ là 4.81
-    var Va = (getEnergy * 2 * Vref)/1023; // 1023 là resolution của ADC 10 bits
-    var VaReality = ((Va * 17.6)/2); // Tỉ lệ thực tế đo được đồng hồ đo và Va
+    var VaReality = (getEnergy * 2 * Vref)/1023; // 1023 là resolution của ADC 10 bits
+    //var VaReality = ((Va * 17.6)/2); // Tỉ lệ thực tế đo được đồng hồ đo và Va
     console.log("Real: ",VaReality.toFixed(2));
 
     io.sockets.emit("SOLAR_STATUS_CHANGED",getDirStatus);
